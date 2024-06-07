@@ -153,8 +153,8 @@ def zeroStateSecondDegreeODE():
 
 def main():
     while True:
-        print('(1) First Degree ODE')
-        print('(2) Second Degree ODE')
+        print('(1) Zero Input First Degree ODE')
+        print('(2) Zero Input Second Degree ODE')
         print('(3) Zero State First Degree ODE')
         print('(4) Zero State Second Degree ODE')
         usrInput = input()
