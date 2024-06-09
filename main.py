@@ -5,98 +5,74 @@ import os
 
 sp.init_printing(pretty_print=True)
 
-def first_order_ode(t, y, a, b):
+def firstOrderModel(t, y, a, b):
     dydt = a * y + b * t
     return dydt
 
 def solveFirstOrderODE(a, b, y0):
-    # Define the time span
-    t_span = [0, 1]
-
-    # Solve the first-order ODE
-    sol = solve_ivp(first_order_ode, t_span, [y0], args=(a, b))
-
-    # Extract the solution
+    timeSpan = [0, 10]
+    
+    sol = solve_ivp(firstOrderModel, timeSpan, [y0], args=(a, b))
+    
     t = sol.t
     y = sol.y[0]
-
-    # Print the solution
-    # print("Solution (numerical):")
+    
     # print("t:", t)
     # print("y:", y)
 
-    # Define the first-order ODE symbolically
-    t_sym = sp.symbols('t')
-    y_sym = sp.Function('y')(t_sym)
-    equation = sp.Eq(y_sym.diff(t_sym) - a * y_sym - b * t_sym, 0)
+    tSymbol = sp.symbols('t')
+    ySymbol = sp.Function('y')(tSymbol)
+    equation = sp.Eq(ySymbol.diff(tSymbol) - a * ySymbol - b * tSymbol, 0)
 
-    # Solve the ODE symbolically with initial condition
-    C1 = sp.symbols('C1')
-    solution = sp.dsolve(equation, y_sym, ics={y_sym.subs(t_sym, 0): y0})
-
-    # # Extract the value of C1
-    # C1_value = sp.solve(solution.rhs.subs(t_sym, 0) - y0, C1)
-
-    # Print the general solution
+    solution = sp.dsolve(equation, ySymbol, ics={ySymbol.subs(tSymbol, 0): y0})
+    
     print("\nGeneral solution (symbolic):")
     print(solution)
-
-    # Print the value of C1
+    
     print("Value of C1:", y[0])
         
-def second_order_ode(t, y, a, b, c, d):
+def secondOrderModel(t, y, a, b, c, d):
     dydt = y[1]
     dzdt = -(b * y[1] + c * y[0] + d) / a
     return [dydt, dzdt]
 
-def solveSecondOrderODE(a, b, c, d, y0, y_prime_0):
-    # Initial conditions
-    y0 = [y0, y_prime_0] 
-
-    # Time span
-    t_span = [0, 10]
-
-    # Solve the ODE
-    sol = solve_ivp(second_order_ode, t_span, y0, args=(a, b, c, d))
-
-    # Extract the solution
+def solveSecondOrderODE(a, b, c, d, y0, yd0):
+    y0 = [y0, yd0] 
+    
+    timeSpan = [0, 10]
+    
+    sol = solve_ivp(secondOrderModel, timeSpan, y0, args=(a, b, c, d))
+    
     t = sol.t
     y = sol.y[0]
-
-    # Print the values of C1 and C2 (which correspond to y(0) and y'(0))
+    
     print("Values of C1 and C2 (from numerical solution):")
     print("C1 (y(0)): ", y0[0])
     print("C2 (y'(0)): ", y0[1])
-
-    # Define the second-order ODE symbolically
-    t_sym = sp.symbols('t')
-    y_sym = sp.Function('y')(t_sym)
-    equation = sp.Eq(a * y_sym.diff(t_sym, t_sym) + b * y_sym.diff(t_sym) + c * y_sym + d, 0)
-
-    # Solve the ODE symbolically
+    
+    tSymbol = sp.symbols('t')
+    ySymbol = sp.Function('y')(tSymbol)
+    equation = sp.Eq(a * ySymbol.diff(tSymbol, tSymbol) + b * ySymbol.diff(tSymbol) + c * ySymbol + d, 0)
+    
     solution = sp.dsolve(equation)
-
-    # Print the general solution
+    
     print("\nGeneral solution (symbolic):")
     print(solution)
-
-    # Identify the constants in the solution
+    
     constants = sp.symbols('C1 C2')
-
-    # Extract the constants from the solution
-    constants_values = [solution.subs(constant, sp.symbols(str(constant))) for constant in constants]
-
-    # Print the values of C1 and C2
+    
+    constantsValues = [solution.subs(constant, sp.symbols(str(constant))) for constant in constants]
+    
     print("\nValues of C1 and C2 (from symbolic solution):")
     for i, constant in enumerate(constants):
-        print(f"{constant}: {constants_values[i]}")
+        print(f"{constant}: {constantsValues[i]}")
 
 
 def zeroInputFirstDegreeODE(a, b, y0):
     t = sp.symbols('t')
     y = sp.Function('y')(t)
     
-    ode = sp.Eq(a * y.diff(t) + b * y, 0)  # Equation to be solved
+    ode = sp.Eq(a * y.diff(t) + b * y, 0)  
     print("The differential equation is:")
     sp.pprint(ode)
     print()
@@ -128,7 +104,7 @@ def zeroInputSecondDegreeODE(a, b, c, y0, dy0):
     t = sp.symbols('t')
     y = sp.Function('y')(t)
     
-    ode = sp.Eq(a * y.diff(t, t) + b * y.diff(t) + c * y, 0)  # Equation to be solved
+    ode = sp.Eq(a * y.diff(t, t) + b * y.diff(t) + c * y, 0)  
     print("The differential equation is:")
     sp.pprint(ode)
     print()
@@ -171,7 +147,7 @@ def zeroStateFirstDegreeODE(a, b, c, forcing_function):
     sp.pprint(F)
     print()
     
-    odeLaplace = sp.Eq(a * s * Y - a * 0 + b * Y + c, F)   # Equation to be solved
+    odeLaplace = sp.Eq(a * s * Y - a * 0 + b * Y + c, F)   
     print("Laplace transform of the differential equation:")
     sp.pprint(odeLaplace)
     print()
@@ -197,7 +173,7 @@ def zeroStateSecondDegreeODE(a, b, c, d, forcing_function):
     sp.pprint(F)
     print()
     
-    odeLaplace = sp.Eq(a * s**2 * Y - a * s * 0 - a * 0 + b * s * Y + c * Y + d, F)   # Equation to be solved
+    odeLaplace = sp.Eq(a * s**2 * Y - a * s * 0 - a * 0 + b * s * Y + c * Y + d, F)   
     print("Laplace transform of the differential equation:")
     sp.pprint(odeLaplace)
     print()
