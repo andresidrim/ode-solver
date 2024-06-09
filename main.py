@@ -1,3 +1,5 @@
+# Authors: André Sidrim, Fernanda Panzera
+
 import sympy as sp
 import os
 
@@ -5,25 +7,20 @@ def zeroInputFirstDegreeODE():
     t = sp.symbols('t')
     y = sp.Function('y')(t)
     
-    # Define the ODE
-    ode = sp.Eq(y.diff(t) + 3 * y, 0)
+    ode = sp.Eq(y.diff(t) + 3 * y, 0) # -> Equation to be solved
     print("The differential equation is:")
     sp.pprint(ode)
     print()
     
-    # Solve the ODE to get the general solution
     general_solution = sp.dsolve(ode)
     print("The general solution to the ODE is:")
     sp.pprint(general_solution)
     print()
     
-    # Initial condition
     y0 = 2
     
-    # Extract the constant symbol C1
     C1 = sp.symbols('C1')
     
-    # Substitute t=0 and y(0)=y0 into the general solution and solve for C1
     initial_condition_eq = general_solution.rhs.subs(t, 0) - y0
     print("Setting initial condition:")
     sp.pprint(initial_condition_eq)
@@ -32,9 +29,9 @@ def zeroInputFirstDegreeODE():
     constant_solution = sp.solve(initial_condition_eq, C1)
     
     if constant_solution:
-        C1_val = constant_solution[0]
-        particular_solution = general_solution.subs(C1, C1_val)
-        print("C1 =", C1_val)
+        C1value = constant_solution[0]
+        particular_solution = general_solution.subs(C1, C1value)
+        print("C1 =", C1value)
         print("\nThe particular solution to the ODE with the given initial condition is:")
         sp.pprint(particular_solution)
     else:
@@ -44,23 +41,19 @@ def zeroInputSecondDegreeODE():
     t = sp.symbols('t')
     y = sp.Function('y')(t)
     
-    # Define the ODE
-    ode = sp.Eq(y.diff(t, t) + 2 * y.diff(t) + y, 0)
+    ode = sp.Eq(y.diff(t, t) + 2 * y.diff(t) + y, 0) # -> Equation to be solved
     print("The differential equation is:")
     sp.pprint(ode)
     print()
     
-    # Solve the ODE to get the general solution
     general_solution = sp.dsolve(ode)
     print("The general solution to the ODE is:")
     sp.pprint(general_solution)
     print()
     
-    # Initial conditions
     y0 = 1
     dy0 = 0
     
-    # Find the constant symbols (C1, C2) and solve for them using the initial conditions
     constants = list(general_solution.rhs.free_symbols)
     C1, C2 = constants[0], constants[1]
     
@@ -74,11 +67,11 @@ def zeroInputSecondDegreeODE():
     constants_solution = sp.solve((eq1, eq2), (C1, C2))
     
     if constants_solution:
-        C1_val = constants_solution[C1]
-        C2_val = constants_solution[C2]
+        C1value = constants_solution[C1]
+        C2value = constants_solution[C2]
         particular_solution = general_solution.subs(constants_solution)
-        print("C1 =", C1_val.evalf())  # Evaluate C1 for a specific value
-        print("C2 =", C2_val.evalf())  # Evaluate C2 for a specific value
+        print("C1 =", C1value.evalf())  
+        print("C2 =", C2value.evalf())  
         print("\nThe particular solution to the ODE with the given initial conditions is:")
         sp.pprint(particular_solution)
     else:
@@ -90,66 +83,56 @@ def zeroStateFirstDegreeODE():
     Y = sp.Function('Y')(s)
     y = sp.Function('y')(t)
     
-    # Define the forcing function
-    f = t  # For example, let's take f(t) = t
+    f = t  
     
-    # Define the Laplace transform of the forcing function
     F = sp.laplace_transform(f, t, s, noconds=True)
     print("Laplace transform of the forcing function F(s):")
     sp.pprint(F)
     print()
     
-    # Define the Laplace transform of the ODE
-    ode_laplace = sp.Eq(s * Y - 0 + 3 * Y, F)  # Assuming y(0) = 0 for zero state response
+    odeLaplace = sp.Eq(s * Y - 0 + 3 * Y, F)   # -> Equation to be solved
     print("Laplace transform of the differential equation:")
-    sp.pprint(ode_laplace)
+    sp.pprint(odeLaplace)
     print()
     
-    # Solve for Y(s)
-    Y_sol = sp.solve(ode_laplace, Y)[0]
+    YSol = sp.solve(odeLaplace, Y)[0]
     print("Solving for Y(s):")
-    sp.pprint(Y_sol)
+    sp.pprint(YSol)
     print()
     
-    # Take the inverse Laplace transform to find y(t)
-    y_sol = sp.inverse_laplace_transform(Y_sol, s, t)
+    ySol = sp.inverse_laplace_transform(YSol, s, t)
     print("Inverse Laplace transform to find y(t):")
-    sp.pprint(y_sol)
+    sp.pprint(ySol)
     print("\nThe zero state solution to the ODE is:")
-    sp.pprint(y_sol)
+    sp.pprint(ySol)
 
 def zeroStateSecondDegreeODE():
     t, s = sp.symbols('t s')
     Y = sp.Function('Y')(s)
     y = sp.Function('y')(t)
     
-    # Define the forcing function
-    f = t  # For example, let's take f(t) = t
+    f = t  
     
-    # Define the Laplace transform of the forcing function
     F = sp.laplace_transform(f, t, s, noconds=True)
     print("Laplace transform of the forcing function F(s):")
     sp.pprint(F)
     print()
     
-    # Define the Laplace transform of the ODE
-    ode_laplace = sp.Eq(s**2 * Y - s*0 - 0 + 2 * s * Y + Y, F)  # Assuming y(0) = 0 and y'(0) = 0 for zero state response
+    odeLaplace = sp.Eq(s**2 * Y - s*0 - 0 + 2 * s * Y + Y, F)   # -> Equation to be solved
     print("Laplace transform of the differential equation:")
-    sp.pprint(ode_laplace)
+    sp.pprint(odeLaplace)
     print()
     
-    # Solve for Y(s)
-    Y_sol = sp.solve(ode_laplace, Y)[0]
+    YSol = sp.solve(odeLaplace, Y)[0]
     print("Solving for Y(s):")
-    sp.pprint(Y_sol)
+    sp.pprint(YSol)
     print()
     
-    # Take the inverse Laplace transform to find y(t)
-    y_sol = sp.inverse_laplace_transform(Y_sol, s, t)
+    ySol = sp.inverse_laplace_transform(YSol, s, t)
     print("Inverse Laplace transform to find y(t):")
-    sp.pprint(y_sol)
+    sp.pprint(ySol)
     print("\nThe zero state solution to the ODE is:")
-    sp.pprint(y_sol)
+    sp.pprint(ySol)
 
 def main():
     while True:
