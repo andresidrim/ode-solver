@@ -1,1 +1,1 @@
-ode-solver
+ODE (Ordinary Differential Equation) solver
