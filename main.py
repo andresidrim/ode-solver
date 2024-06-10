@@ -1,3 +1,5 @@
+# Authors: André Sidrim, Fernanda Panzera
+
 import os
 
 import secondOrderODE as secondOrder
